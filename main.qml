@@ -5,8 +5,10 @@ import QtQuick.Window 2.15
 import Models 1.0
 
 Window {
-    width: 420
+    width: 440
     height: 700
+    minimumWidth: 440
+    minimumHeight: 400
     visible: true
     title: qsTr("Vat Calculator")
 
@@ -15,14 +17,13 @@ Window {
 
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.leftMargin: 10
-        anchors.bottomMargin: 10
+        anchors.rightMargin: 10
         anchors.topMargin: 10
+        spacing: 5
 
-        height: 100
-        width: parent.width
+        height: 50
 
         TextField {
             id: productName
@@ -64,6 +65,7 @@ Window {
 
     Rectangle {
         anchors.right: parent.right
+        anchors.top: productDetail.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.leftMargin: 10
@@ -71,9 +73,8 @@ Window {
         anchors.bottomMargin: 10
         anchors.topMargin: 10
 
-        height: 600
-        width: 400
         color: "lightgreen"
+        height: parent.height - productDetail.height
 
         ListView {
             id: cart
@@ -84,11 +85,19 @@ Window {
             snapMode: ListView.SnapToItem
             boundsBehavior: Flickable.StopAtBounds
 
+            ScrollBar.vertical: ScrollBar {
+                visible: cart.contentHeight > cart.height ? true : false
+            }
+
             footer: Rectangle {
                 color: "yellow"
-                width: 400
-                height: 40
+
+                height: 30
+                width: parent.width
+                z: 10
                 Text {
+                    font.pointSize: 12
+                    font.bold: true
                     text: "Total VAT: " + productModel.totalVat.toFixed(4)
                 }
             }
@@ -99,15 +108,16 @@ Window {
 
             model: productModel
             delegate: Item {
-                width: 400;
-                height: 40
+                height: 20
+                width: parent.width
+
                 Row {
                     Text {
                         text: modelData_ProductName
                         width: 200
                     }
                     Text {
-                        text: modelData_Price.toFixed(4)
+                        text: modelData_Price.toFixed(2)
                         width: 100
                     }
                     Text {
@@ -115,12 +125,18 @@ Window {
                         width: 100
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: cart.currentIndex = index
+                }
             }
 
             header:  Rectangle {
                 color: "yellow"
-                width: 400
-                height: 40
+                height: 30
+                width: parent.width
+                z: 10
 
                 Row {
                     anchors.fill: parent
